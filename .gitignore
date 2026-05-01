@@ -57,3 +57,6 @@ tsconfig.tsbuildinfo
 
 # Gemini
 .gemini/
+
+#Internal
+internal
