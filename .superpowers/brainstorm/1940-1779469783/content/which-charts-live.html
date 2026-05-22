@@ -1,0 +1,40 @@
+<h2>Which charts should go live?</h2>
+<p class="subtitle">These are the current dashboard visualizations. Select all that should be powered by real agent-submitted data (vs staying as mock data for now).</p>
+
+<div class="options" data-multiselect>
+
+  <div class="option" data-choice="revenue" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Revenue Forecast</h3>
+      <p>Area chart — actual vs projected revenue by month. Would require Finance agent to post monthly figures.</p>
+    </div>
+  </div>
+
+  <div class="option" data-choice="throughput" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>Task Throughput</h3>
+      <p>Bar chart — tasks completed vs failed per day. Could be auto-computed from message ack/nack events in the router.</p>
+    </div>
+  </div>
+
+  <div class="option" data-choice="budget" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>Budget Allocation</h3>
+      <p>Progress bars — spend vs allocated per department. Would require Finance agent to post per-department budget updates.</p>
+    </div>
+  </div>
+
+  <div class="option" data-choice="kpis" onclick="toggleSelect(this)">
+    <div class="letter">D</div>
+    <div class="content">
+      <h3>KPI Cards</h3>
+      <p>Top-row numbers — revenue, tasks active, agents online, alerts. Some derivable from the router; others need agent reports.</p>
+    </div>
+  </div>
+
+</div>
+
+<p class="subtitle" style="margin-top: 24px; font-size: 12px; opacity: 0.6">You can select multiple. Click an option to toggle it selected.</p>

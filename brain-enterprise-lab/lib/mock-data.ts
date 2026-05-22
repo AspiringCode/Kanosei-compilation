@@ -1,6 +1,7 @@
 import type {
   Agent, Task, Message, Workflow, Resource, BudgetAllocation,
-  KPIMetric, ActivityEvent, Alert, Simulation, ApprovalRequest
+  KPIMetric, ActivityEvent, Alert, Simulation, ApprovalRequest,
+  KanoseiNotification, AgentLoad, PipelineStage, MessageFlow, KanoseiWorkflow,
 } from './types'
 
 export const AGENTS: Agent[] = [
@@ -356,4 +357,75 @@ export const REVENUE_FORECAST = [
   { month: 'Jul', forecast: 285000 },
   { month: 'Aug', forecast: 310000 },
   { month: 'Sep', forecast: 340000 },
+]
+
+export const AGENT_LOAD: AgentLoad[] = [
+  { name: 'Engineering', agentId: 'engineering', value: 91, color: 'var(--agent-engineering)' },
+  { name: 'Product',     agentId: 'product',     value: 78, color: 'var(--agent-product)' },
+  { name: 'Marketing',   agentId: 'marketing',   value: 64, color: 'var(--agent-marketing)' },
+  { name: 'Sales',       agentId: 'sales',       value: 55, color: 'var(--agent-sales)' },
+  { name: 'CEO',         agentId: 'ceo',         value: 45, color: 'var(--agent-ceo)' },
+  { name: 'Finance',     agentId: 'finance',     value: 41, color: 'var(--agent-finance)' },
+  { name: 'HR',          agentId: 'hr',          value: 32, color: 'var(--agent-hr)' },
+]
+
+export const PIPELINE: PipelineStage[] = [
+  { stage: 'Prospect',    count: 142, value: 0,    color: 'var(--text-3)' },
+  { stage: 'Qualified',   count: 86,  value: 1240, color: 'var(--sky)' },
+  { stage: 'Proposal',    count: 34,  value: 980,  color: 'var(--indigo)' },
+  { stage: 'Negotiation', count: 18,  value: 720,  color: 'var(--amber)' },
+  { stage: 'Closed Won',  count: 11,  value: 480,  color: 'var(--green)' },
+]
+
+export const MESSAGE_FLOW: MessageFlow[] = [
+  { from: 'ceo',         to: 'product',     count: 42 },
+  { from: 'ceo',         to: 'finance',     count: 38 },
+  { from: 'ceo',         to: 'hr',          count: 21 },
+  { from: 'product',     to: 'engineering', count: 89 },
+  { from: 'product',     to: 'marketing',   count: 47 },
+  { from: 'marketing',   to: 'sales',       count: 64 },
+  { from: 'engineering', to: 'product',     count: 38 },
+  { from: 'finance',     to: 'ceo',         count: 27 },
+  { from: 'sales',       to: 'finance',     count: 31 },
+]
+
+export const KANOSEI_WORKFLOWS: KanoseiWorkflow[] = [
+  {
+    id: 'wf1', name: 'Launch SaaS MVP', progress: 40, status: 'active', owner: 'ceo',
+    stages: [
+      { name: 'Validation',     agent: 'product',     status: 'done' },
+      { name: 'Architecture',   agent: 'engineering', status: 'done' },
+      { name: 'Core Build',     agent: 'engineering', status: 'active' },
+      { name: 'Marketing Prep', agent: 'marketing',   status: 'active' },
+      { name: 'Sales Enable',   agent: 'sales',       status: 'pending' },
+      { name: 'Launch',         agent: 'ceo',         status: 'pending' },
+    ],
+  },
+  {
+    id: 'wf2', name: 'Q3 Budget Reallocation', progress: 25, status: 'active', owner: 'finance',
+    stages: [
+      { name: 'Analysis',     agent: 'finance', status: 'done' },
+      { name: 'Dept Review',  agent: 'finance', status: 'active' },
+      { name: 'CEO Approval', agent: 'ceo',     status: 'pending' },
+      { name: 'Distribute',   agent: 'finance', status: 'pending' },
+    ],
+  },
+  {
+    id: 'wf3', name: 'Hire Senior Backend Team', progress: 30, status: 'active', owner: 'hr',
+    stages: [
+      { name: 'JD Creation',     agent: 'hr', status: 'done' },
+      { name: 'Source & Screen', agent: 'hr', status: 'active' },
+      { name: 'Interviews',      agent: 'hr', status: 'pending' },
+      { name: 'Offer & Onboard', agent: 'hr', status: 'pending' },
+    ],
+  },
+]
+
+export const NOTIFICATIONS: KanoseiNotification[] = [
+  { id: 'n1', section: 'Engineering', sectionPath: 'agents', severity: 'warning', title: 'Engineering at 91% capacity', desc: 'Kano flagged 3 queued tasks. Risk of Q3 delays.', when: '2m', unread: true, agentId: 'engineering' },
+  { id: 'n2', section: 'Finance',     sectionPath: 'overview', severity: 'pending', title: 'AWS spend $85K awaiting approval', desc: 'Finance agent submitted infrastructure scaling spend.', when: '8m', unread: true, agentId: 'finance' },
+  { id: 'n3', section: 'Sales',       sectionPath: 'workflows', severity: 'error',  title: 'Lead handoff failed (3 attempts)', desc: 'Marketing → Sales blocked — sales deck not updated.', when: '14m', unread: true, agentId: 'sales' },
+  { id: 'n4', section: 'Marketing',   sectionPath: 'overview', severity: 'warning', title: 'Marketing budget overrun projected', desc: '$10K projected variance. Reallocate or scope down?', when: '32m', unread: false, agentId: 'marketing' },
+  { id: 'n5', section: 'HR',          sectionPath: 'workflows', severity: 'info',   title: 'HR completed candidate screen', desc: '12 candidates scored — top 3 ready for review.', when: '1h', unread: false, agentId: 'hr' },
+  { id: 'n6', section: 'Product',     sectionPath: 'overview', severity: 'info',    title: 'Product shipped Q3 roadmap draft', desc: '6 themes, 14 initiatives. Awaiting your review.', when: '3h', unread: false, agentId: 'product' },
 ]

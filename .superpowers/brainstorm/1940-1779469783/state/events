@@ -1,0 +1,4 @@
+{"type":"click","text":"A\n    \n      Revenue Forecast\n      Area chart — actual vs projected revenue by month. Would require Finance agent to post monthly figures.","choice":"revenue","id":null,"timestamp":1779469843892}
+{"type":"click","text":"C\n    \n      Budget Allocation\n      Progress bars — spend vs allocated per department. Would require Finance agent to post per-department budget updates.","choice":"budget","id":null,"timestamp":1779469844598}
+{"type":"click","text":"B\n    \n      Task Throughput\n      Bar chart — tasks completed vs failed per day. Could be auto-computed from message ack/nack events in the router.","choice":"throughput","id":null,"timestamp":1779469847967}
+{"type":"click","text":"D\n    \n      KPI Cards\n      Top-row numbers — revenue, tasks active, agents online, alerts. Some derivable from the router; others need agent reports.","choice":"kpis","id":null,"timestamp":1779469848498}

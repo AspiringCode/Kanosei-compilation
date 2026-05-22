@@ -1,13 +1,13 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { useState } from 'react'
 import {
   LayoutDashboard, MessageSquare, FlaskConical, GitBranch,
   Database, Eye, Crown, Package, Code2, Users, TrendingUp,
   Megaphone, DollarSign, ChevronDown, ChevronRight,
-  Zap, Menu, X, Activity, Circle,
+  Menu, X, Circle, Settings, Zap, Activity,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { AGENTS } from '@/lib/mock-data'
@@ -42,24 +42,36 @@ const STATUS_COLOR: Record<string, string> = {
   offline: 'var(--text-3)',
 }
 
+const AGENT_STATUS: Record<AgentId, string> = {
+  ceo:         'active',
+  product:     'busy',
+  engineering: 'busy',
+  hr:          'idle',
+  sales:       'active',
+  marketing:   'active',
+  finance:     'idle',
+}
+
 const CORE_NAV = [
-  { href: '/dashboard',    label: 'Dashboard',   icon: <LayoutDashboard size={14} /> },
-  { href: '/chat',         label: 'Command',      icon: <MessageSquare size={14} />, tag: 'Chat' },
-  { href: '/simulation',   label: 'Simulation',   icon: <Activity size={14} /> },
-  { href: '/lab',          label: 'BRAIN Lab',    icon: <FlaskConical size={14} /> },
+  { href: '/dashboard',    label: 'Overview',      icon: <LayoutDashboard size={14} /> },
+  { href: '/chat',         label: 'Command',        icon: <MessageSquare size={14} />, tag: 'Chat' },
+  { href: '/workflows',    label: 'Workflows',      icon: <GitBranch size={14} /> },
+  { href: '/observability',label: 'Observability',  icon: <Eye size={14} /> },
 ]
 
 const OPS_NAV = [
-  { href: '/workflows',     label: 'Workflows',     icon: <GitBranch size={14} /> },
   { href: '/resources',     label: 'Resources',     icon: <Database size={14} /> },
   { href: '/messages',      label: 'Messages',      icon: <MessageSquare size={14} /> },
-  { href: '/observability', label: 'Observability', icon: <Eye size={14} /> },
+  { href: '/lab',           label: 'Lab',           icon: <FlaskConical size={14} /> },
 ]
 
 function SidebarContent({ onClose }: { onClose?: () => void }) {
   const pathname = usePathname()
+  const router   = useRouter()
   const [agentsOpen, setAgentsOpen] = useState(true)
   const { data: health } = useHealth()
+
+  const isSettings = pathname === '/settings'
 
   return (
     <aside
@@ -70,43 +82,51 @@ function SidebarContent({ onClose }: { onClose?: () => void }) {
         borderRight: '1px solid var(--border)',
       }}
     >
-      {/* Logo */}
+      {/* Logo / brand */}
       <div
-        className="flex items-center gap-3 px-4 py-3.5"
-        style={{ borderBottom: '1px solid var(--border)' }}
+        className="flex items-center gap-3 px-4"
+        style={{ height: 'var(--topbar-h)', borderBottom: '1px solid var(--border)', flexShrink: 0 }}
       >
+        {/* Kanosei logo mark */}
         <div
-          className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
-          style={{ background: 'var(--indigo)', boxShadow: '0 0 14px rgba(99,102,241,0.4)' }}
+          className="flex items-center justify-center flex-shrink-0"
+          style={{
+            width: 30, height: 30,
+            borderRadius: 8,
+            background: 'rgba(139,92,246,0.15)',
+            border: '1px solid rgba(139,92,246,0.3)',
+          }}
         >
-          <Zap size={14} className="text-white" />
+          <Zap size={14} style={{ color: 'var(--primary-2)' }} />
         </div>
         <div className="flex-1 min-w-0">
-          <div className="font-display text-sm font-bold" style={{ color: 'var(--text-1)', letterSpacing: '0.05em' }}>
-            BRAIN
-          </div>
-          <div className="text-[10px] tracking-widest uppercase" style={{ color: 'var(--text-3)' }}>
-            Enterprise Lab
+          <div className="kanosei-mark">KANOSEI</div>
+          <div style={{ fontSize: 9, fontFamily: 'var(--font-mono)', letterSpacing: '0.16em', color: 'var(--text-3)', textTransform: 'uppercase' }}>
+            Autonomous Co.
           </div>
         </div>
         {onClose && (
-          <button onClick={onClose} className="lg:hidden cursor-pointer" style={{ color: 'var(--text-3)' }}>
+          <button onClick={onClose} className="lg:hidden" style={{ color: 'var(--text-3)' }}>
             <X size={15} />
           </button>
         )}
       </div>
 
-      {/* API health */}
-      <div className="px-4 py-2 flex items-center justify-between text-[11px]"
-        style={{ borderBottom: '1px solid var(--border)' }}>
-        <span style={{ color: 'var(--text-3)' }}>API</span>
+      {/* Company status */}
+      <div
+        className="flex items-center justify-between px-4"
+        style={{ height: 36, borderBottom: '1px solid var(--border)', flexShrink: 0 }}
+      >
+        <span style={{ fontSize: 10.5, fontFamily: 'var(--font-mono)', color: 'var(--text-3)', letterSpacing: '0.06em', textTransform: 'uppercase' }}>
+          Company
+        </span>
         {health ? (
-          <span className="flex items-center gap-1.5" style={{ color: 'var(--green)' }}>
+          <span className="flex items-center gap-1.5" style={{ fontSize: 11, color: 'var(--green)', fontFamily: 'var(--font-mono)' }}>
             <span className="live-dot" style={{ width: 6, height: 6 }} />
-            {health.backend}
+            operating
           </span>
         ) : (
-          <span style={{ color: 'var(--text-3)' }}>offline</span>
+          <span style={{ fontSize: 11, color: 'var(--text-3)', fontFamily: 'var(--font-mono)' }}>offline</span>
         )}
       </div>
 
@@ -121,15 +141,25 @@ function SidebarContent({ onClose }: { onClose?: () => void }) {
               const active = pathname === item.href
               return (
                 <Link key={item.href} href={item.href}
-                  className={cn('nav-item', active && 'active')}>
-                  <span style={{ color: item.tag && !active ? 'var(--indigo-2)' : 'inherit' }}>
+                  className={cn('nav-item', active && 'active')}
+                  style={active ? { color: 'var(--primary-2)' } : {}}
+                >
+                  <span style={{ color: active ? 'var(--primary-2)' : 'var(--text-3)' }}>
                     {item.icon}
                   </span>
                   <span className="flex-1">{item.label}</span>
                   {item.tag && !active && (
                     <span
-                      className="text-[9px] px-1.5 py-0.5 rounded font-semibold"
-                      style={{ background: 'rgba(99,102,241,0.15)', color: 'var(--indigo-2)' }}
+                      style={{
+                        fontSize: 9,
+                        padding: '1px 6px',
+                        borderRadius: 3,
+                        background: 'rgba(139,92,246,0.15)',
+                        color: 'var(--primary-2)',
+                        fontWeight: 600,
+                        letterSpacing: '0.05em',
+                        textTransform: 'uppercase',
+                      }}
                     >
                       {item.tag}
                     </span>
@@ -155,20 +185,20 @@ function SidebarContent({ onClose }: { onClose?: () => void }) {
             <div className="space-y-0.5">
               {AGENTS.map(agent => {
                 const active = pathname === `/agents/${agent.id}`
+                const color  = AGENT_COLOR[agent.id as AgentId]
+                const status = AGENT_STATUS[agent.id as AgentId] ?? agent.status
                 return (
                   <Link
                     key={agent.id}
                     href={`/agents/${agent.id}`}
                     className={cn('nav-item', active && 'active')}
-                    style={active ? { color: AGENT_COLOR[agent.id], borderColor: `${AGENT_COLOR[agent.id]}30`, background: `${AGENT_COLOR[agent.id]}12` } : {}}
+                    style={active ? { color, borderColor: `${color}30`, background: `${color}12` } : {}}
                   >
-                    <span style={{ color: AGENT_COLOR[agent.id] }}>{AGENT_ICONS[agent.id]}</span>
+                    <span style={{ color }}>{AGENT_ICONS[agent.id as AgentId]}</span>
                     <span className="flex-1">{agent.name}</span>
-                    <Circle
-                      size={6}
-                      fill={STATUS_COLOR[agent.status]}
-                      style={{ color: STATUS_COLOR[agent.status], flexShrink: 0 }}
-                    />
+                    <span style={{ fontSize: 10, color: STATUS_COLOR[status] ?? 'var(--text-3)', fontFamily: 'var(--font-mono)' }}>
+                      {status}
+                    </span>
                   </Link>
                 )
               })}
@@ -180,32 +210,47 @@ function SidebarContent({ onClose }: { onClose?: () => void }) {
         <div>
           <div className="section-label px-2 mb-2">Operations</div>
           <div className="space-y-0.5">
-            {OPS_NAV.map(item => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={cn('nav-item', pathname === item.href && 'active')}
-              >
-                {item.icon}
-                <span>{item.label}</span>
-              </Link>
-            ))}
+            {OPS_NAV.map(item => {
+              const active = pathname === item.href
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={cn('nav-item', active && 'active')}
+                  style={active ? { color: 'var(--primary-2)' } : {}}
+                >
+                  <span style={{ color: active ? 'var(--primary-2)' : 'var(--text-3)' }}>{item.icon}</span>
+                  <span>{item.label}</span>
+                </Link>
+              )
+            })}
           </div>
         </div>
       </nav>
 
-      {/* User */}
-      <div className="px-4 py-3" style={{ borderTop: '1px solid var(--border)' }}>
-        <div className="flex items-center gap-2.5">
+      {/* Settings + user */}
+      <div style={{ borderTop: '1px solid var(--border)', padding: '10px 12px 12px' }}>
+        <Link
+          href="/settings"
+          className={cn('nav-item', isSettings && 'active')}
+          style={{ marginBottom: 8, ...(isSettings ? { color: 'var(--primary-2)' } : {}) }}
+        >
+          <Settings size={14} style={{ color: isSettings ? 'var(--primary-2)' : 'var(--text-3)' }} />
+          <span className="flex-1">Settings</span>
+        </Link>
+        <div className="flex items-center gap-2.5 px-2">
           <div
-            className="w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-bold text-white flex-shrink-0"
-            style={{ background: 'var(--indigo)' }}
+            className="flex items-center justify-center text-[11px] font-bold text-white flex-shrink-0"
+            style={{
+              width: 28, height: 28, borderRadius: '50%',
+              background: 'linear-gradient(135deg, var(--primary) 0%, var(--primary-3) 100%)',
+            }}
           >
             M
           </div>
-          <div className="min-w-0">
-            <div className="text-[12px] font-medium truncate" style={{ color: 'var(--text-1)' }}>MANAGER</div>
-            <div className="text-[10px]" style={{ color: 'var(--text-3)' }}>Admin access</div>
+          <div className="min-w-0 flex-1">
+            <div style={{ fontSize: 12, fontWeight: 500, color: 'var(--text-1)' }}>Manager</div>
+            <div style={{ fontSize: 10, color: 'var(--text-3)', fontFamily: 'var(--font-mono)' }}>founder · admin</div>
           </div>
         </div>
       </div>

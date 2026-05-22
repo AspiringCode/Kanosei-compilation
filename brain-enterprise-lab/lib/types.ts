@@ -170,6 +170,47 @@ export interface SimulationEvent {
   impact?: string
 }
 
+export interface KanoseiNotification {
+  id: string
+  section: string
+  sectionPath: string
+  severity: 'error' | 'warning' | 'pending' | 'info'
+  title: string
+  desc: string
+  when: string
+  unread: boolean
+  agentId: AgentId
+}
+
+export interface AgentLoad {
+  name: string
+  agentId: AgentId
+  value: number
+  color: string
+}
+
+export interface PipelineStage {
+  stage: string
+  count: number
+  value: number
+  color: string
+}
+
+export interface MessageFlow {
+  from: AgentId
+  to: AgentId
+  count: number
+}
+
+export interface KanoseiWorkflow {
+  id: string
+  name: string
+  progress: number
+  status: 'active' | 'paused' | 'completed'
+  owner: AgentId
+  stages: { name: string; agent: AgentId; status: 'done' | 'active' | 'pending' }[]
+}
+
 export interface ApprovalRequest {
   id: string
   requestedBy: AgentId
